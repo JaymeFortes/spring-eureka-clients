@@ -1,0 +1,98 @@
+services:
+  eureka-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_MODULE: eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+
+  config-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_MODULE: config-server
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    environment:
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+
+  pecas-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_MODULE: pecas-service
+    container_name: pecas-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_CLOUD_CONFIG_ENABLED: "false"
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka/
+    depends_on:
+      - config-server
+      - eureka-server
+
+  clientes-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_MODULE: clientes-service
+    container_name: clientes-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_CLOUD_CONFIG_ENABLED: "false"
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka/
+    depends_on:
+      - config-server
+      - eureka-server
+
+  representantes-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_MODULE: representantes-service
+    container_name: representantes-service
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_CLOUD_CONFIG_ENABLED: "false"
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka/
+    depends_on:
+      - config-server
+      - eureka-server
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_MODULE: api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_CLOUD_CONFIG_ENABLED: "false"
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka/
+      PECAS_SERVICE_URL: http://pecas-service:8081
+      CLIENTES_SERVICE_URL: http://clientes-service:8082
+      REPRESENTANTES_SERVICE_URL: http://representantes-service:8083
+    depends_on:
+      - config-server
+      - eureka-server
+      - pecas-service
+      - clientes-service
+      - representantes-service

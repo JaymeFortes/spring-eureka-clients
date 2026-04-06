@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: api-gateway
+  config:
+    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
+  cloud:
+    gateway:
+      server:
+        webflux:
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowed-origin-patterns: "*"
+                allowed-methods: "*"
+                allowed-headers: "*"
+          routes:
+            - id: pecas
+              uri: ${PECAS_SERVICE_URL:lb://PECAS-SERVICE}
+              predicates:
+                - Path=/api/pecas/**
+            - id: clientes
+              uri: ${CLIENTES_SERVICE_URL:lb://CLIENTES-SERVICE}
+              predicates:
+                - Path=/api/clientes/**
+            - id: representantes
+              uri: ${REPRESENTANTES_SERVICE_URL:lb://REPRESENTANTES-SERVICE}
+              predicates:
+                - Path=/api/representantes/**
+
+server:
+  port: 8080
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
