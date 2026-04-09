@@ -10,6 +10,8 @@ Projeto de microsservicos com Spring Boot, Spring Cloud, Eureka, Config Server e
 - `pecas-service`: CRUD de pecas (porta 8081)
 - `clientes-service`: CRUD de clientes (porta 8082)
 - `representantes-service`: CRUD de representantes (porta 8083)
+- `prometheus`: coleta de metricas via Actuator (porta 9090)
+- `grafana`: visualizacao de metricas (porta 3000)
 
 Fluxo principal:
 
@@ -49,6 +51,16 @@ docker compose up --build
 
 Isso sobe os 6 containers da arquitetura.
 
+Com a observabilidade habilitada, o Compose tambem sobe:
+
+- Prometheus em http://localhost:9090/
+- Grafana em http://localhost:3000/
+
+Credenciais padrao do Grafana:
+
+- usuario: `admin`
+- senha: `admin`
+
 ### Parar tudo
 
 ```bash
@@ -62,6 +74,8 @@ docker compose down
 - Gateway UI: http://localhost:8080/
 - Eureka Dashboard: http://localhost:8761/
 - Config Server: http://localhost:8888/
+- Prometheus: http://localhost:9090/
+- Grafana: http://localhost:3000/
 
 ### APIs via Gateway
 
@@ -76,7 +90,7 @@ No raiz:
 ```bash
 mvn clean package -DskipTests
 ```
-
+  
 Depois iniciar os jars na ordem:
 
 1. `eureka-server`
@@ -95,3 +109,4 @@ Depois iniciar os jars na ordem:
   - `REPRESENTANTES_SERVICE_URL`
 - No Docker Compose, `SPRING_CLOUD_CONFIG_ENABLED=false` e aplicado nos servicos para evitar corrida de inicializacao com o config-server.
 - Em Docker Compose, essas variaveis apontam para nomes de servico da rede interna.
+- Os endpoints de metricas ficam disponiveis em `/actuator/prometheus` em todos os modulos Spring Boot.
