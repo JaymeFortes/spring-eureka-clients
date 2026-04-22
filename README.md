@@ -98,6 +98,39 @@ Depois iniciar os jars na ordem:
 3. `pecas-service`, `clientes-service`, `representantes-service`
 4. `api-gateway`
 
+## Testes e cobertura
+
+O projeto possui testes unitarios, testes com mocks para controllers e testes de integracao para os repositórios JPA.
+
+### Tipos de teste
+
+- Testes unitarios: validam classes pequenas e regras simples, como `CpfUtil`.
+- Testes com mocks: validam os controllers isoladamente, simulando os repositórios.
+- Testes de integracao: validam JPA + H2 + Spring Boot no contexto real da aplicacao.
+
+### Como executar
+
+Para rodar tudo e gerar o relatorio de cobertura do JaCoCo:
+
+```bash
+mvn clean verify
+```
+
+Para rodar apenas os testes sem gerar a estrutura limpa completa:
+
+```bash
+mvn test
+```
+
+### Relatorios do JaCoCo
+
+Depois do `mvn clean verify`, os relatorios ficam disponiveis em:
+
+- `clientes-service/target/site/jacoco/index.html`
+- `pecas-service/target/site/jacoco/index.html`
+- `representantes-service/target/site/jacoco/index.html`
+- Relatorio agregado na raiz: `target/site/jacoco-aggregate/index.html`
+
 ## Observacoes
 
 - A configuracao foi ajustada para funcionar local e Docker com variaveis de ambiente:
